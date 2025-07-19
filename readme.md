@@ -5,11 +5,11 @@ Features
 
 ## **Tech Stack**
 
-    Backend: Node.js, Express.js
+    - Backend: Node.js, Express.js
 
-    Real-Time Communication: Socket.IO
+    - Real-Time Communication: Socket.IO
 
-    Frontend: HTML5, CSS3, Vanilla JavaScript
+    - Frontend: HTML5, CSS3, Vanilla JavaScript
 
 ## **Installation & Setup**
 
