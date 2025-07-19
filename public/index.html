@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TwinZone Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen">
+            <div class="card">
+                <h1>Welcome to TwinZone</h1>
+                <p>Create a private chat room to share with a friend.</p>
+                <button id="create-room-btn">Create New Chat Room</button>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div id="chat-screen" class="hidden">
+            <div id="chat-header">
+                <h2>TwinZone</h2>
+                <p>Share this URL to invite your friend.</p>
+                <div id="share-url-container">
+                    <input type="text" id="share-url" readonly>
+                    <button id="copy-url-btn">Copy</button>
+                </div>
+            </div>
+            <div id="messages-container">
+                <!-- Messages will be appended here -->
+            </div>
+            <div id="chat-form-container">
+                <form id="chat-form">
+                    <input id="message-input" type="text" placeholder="Type your message..." autocomplete="off" required>
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Error/Info Modal -->
+        <div id="modal" class="hidden">
+            <div id="modal-content">
+                <p id="modal-text"></p>
+                <button id="modal-close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Socket.IO client library -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Include your client-side script -->
+    <script src="client.js"></script>
+</body>
+</html>
