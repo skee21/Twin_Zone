@@ -11,20 +11,6 @@ Features
 
     Frontend: HTML5, CSS3, Vanilla JavaScript
 
-## **Project Structure**
-
-The project is organized into a simple and maintainable structure:
-
-twinzone/
-├── public/
-│   ├── index.html       # The main chat page structure
-│   ├── style.css        # Styling for the chat page
-│   └── client.js        # Frontend logic and WebSocket handling
-├── node_modules/        # Directory for installed npm packages
-├── package.json         # Project metadata and dependencies
-├── package-lock.json    # Records exact versions of dependencies
-└── server.js            # Backend server and Socket.IO logic
-
 ## **Installation & Setup**
 
 To run this project on your local machine, follow these simple steps.
