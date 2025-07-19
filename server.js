@@ -12,22 +12,29 @@ const chatRooms = {};
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
+    const handleJoinRoom = (roomId, nickname) => {
+        socket.join(roomId);
+        chatRooms[roomId].users[socket.id] = nickname;
+        
+        socket.emit('room_joined', { 
+            roomId, 
+            history: chatRooms[roomId].messages,
+            nickname
+        });
 
-    socket.on('create_room', (roomId) => {
+        socket.to(roomId).emit('user_joined', nickname);
+    };
+
+    socket.on('create_room', ({ roomId, nickname }) => {
         if (!chatRooms[roomId]) {
-            chatRooms[roomId] = []; 
-            socket.join(roomId);
-            console.log(`User ${socket.id} created and joined room: ${roomId}`);
-            socket.emit('room_joined', { roomId, history: chatRooms[roomId] });
+            chatRooms[roomId] = { messages: [], users: {} };
+            handleJoinRoom(roomId, nickname);
         }
     });
 
-    socket.on('join_room', (roomId) => {
+    socket.on('join_room', ({ roomId, nickname }) => {
         if (chatRooms[roomId]) {
-            socket.join(roomId);
-            console.log(`User ${socket.id} joined room: ${roomId}`);
-            socket.emit('room_joined', { roomId, history: chatRooms[roomId] });
+            handleJoinRoom(roomId, nickname);
         } else {
             socket.emit('error_message', 'This chat room does not exist.');
         }
@@ -35,28 +42,36 @@ io.on('connection', (socket) => {
 
     socket.on('send_message', (data) => {
         const { roomId, message } = data;
-        if (chatRooms[roomId]) {
+        const room = chatRooms[roomId];
+        const nickname = room?.users[socket.id];
+
+        if (room && nickname) {
             const messageData = {
                 senderId: socket.id,
+                nickname: nickname,
                 text: message,
                 timestamp: new Date().toLocaleTimeString()
             };
-            chatRooms[roomId].push(messageData);
-            io.to(roomId).emit('receive_message', messageData);
+            room.messages.push(messageData);
+            socket.to(roomId).emit('receive_message', messageData);
         }
     });
 
     socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
-        socket.rooms.forEach(roomId => {
-            if (roomId !== socket.id) { 
-                const room = io.sockets.adapter.rooms.get(roomId);
-                if (!room || room.size === 0) {
+        for (const roomId in chatRooms) {
+            const room = chatRooms[roomId];
+            if (room.users[socket.id]) {
+                const nickname = room.users[socket.id];
+                delete room.users[socket.id];
+                
+                socket.to(roomId).emit('user_left', nickname);
+
+                if (Object.keys(room.users).length === 0) {
                     delete chatRooms[roomId];
-                    console.log(`Room ${roomId} is empty and has been destroyed.`);
                 }
+                break;
             }
-        });
+        }
     });
 });
 
